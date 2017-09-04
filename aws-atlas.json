@@ -1,0 +1,36 @@
+{
+  "variables": {
+    "aws_access_key": "",
+    "aws_secret_key": "",
+    "atlas_token": ""
+  },
+  "builders": [{
+    "type": "amazon-ebs",
+    "access_key": "{{user `aws_access_key`}}",
+    "secret_key": "{{user `aws_secret_key`}}",
+    "region": "us-west-2",
+    "source_ami": "ami-6e1a0117",
+    "instance_type": "t2.micro",
+    "ssh_username": "ubuntu",
+    "ami_name": "packer-example {{timestamp}}"
+  }],
+  "provisioners": [{
+    "type": "shell",
+    "inline": [
+      "sleep 30",
+      "#!/bin/bash",
+      "sudo apt-get -y update",
+      "sudo apt-get -y install apache2"
+    ]
+  }],
+  "post-processors": [{
+        "type": "atlas",
+        "only": ["amazon-ebs"],
+        "token": "JKcNy8RzJfCPwA.atlasv1.zCmy336sUCx6s54druizeuaCtKj76uJzYl5qkTnNPpD31tOu0YExn7AJaDY9FBKV6Tg",
+        "artifact": "yangchen/aws-lamp",
+        "artifact_type": "amazon.image",
+        "metadata": {
+          "created_at": "{{timestamp}}"
+        }
+  }]
+}
